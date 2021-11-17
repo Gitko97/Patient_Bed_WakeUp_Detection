@@ -4,6 +4,7 @@ import PIL
 import cv2
 from PIL import ImageTk as Pil_imageTk
 result_img = 0
+stop = False
 user_sleep = False
 class App(threading.Thread):
     def __init__(self, window, window_title):
@@ -24,7 +25,7 @@ class App(threading.Thread):
 
         self.canvas = tkinter.Canvas(self.frame1, width=self.video_width, height=self.video_height)
         self.canvas.pack()
-        self.button1 = tkinter.Button(self.frame2, text="문 설정", overrelief='solid', height=15,command=None,compound="c")
+        self.button1 = tkinter.Button(self.frame2, text="일시정지", overrelief='solid', height=15,command=self.stop,compound="c")
         self.button1.pack(expand=1)
         self.button2 = tkinter.Button(self.frame2, text="환자 취침", overrelief='solid', height=15,command=self.change_sleep,compound="c", fg='green')
         self.button2.pack(expand=1)
@@ -35,6 +36,15 @@ class App(threading.Thread):
         global user_sleep
         user_sleep = True
         self.button2.configure(fg="red")
+
+    def stop(self):
+        global stop
+        if stop:
+            stop = False
+            self.button1.configure(fg="green")
+        else:
+            stop = True
+            self.button1.configure(fg="red")
 
     def update(self):
         global result_img
