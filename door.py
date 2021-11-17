@@ -1,24 +1,29 @@
 import cv2
 import numpy as np
+min_point = [-1, -1]
+max_point = [-1, -1]
 class Door:
     def __init__(self):
-        self.min_point = [-1, -1]
-        self.max_point = [-1, -1]
-        self.read_position_file()
         pass
 
-    def read_position_file(self):
+    def read_position_file(self, set_door, video_path):
+        global min_point, max_point
         with open("door_position.txt", "r+") as f:
             line = f.readline()
-            if line == '':
-                self.draw_boundingBox('./testVideo/IMG_5348.MOV')
-                f.write('{},{},{},{}'.format(self.min_point[0], self.min_point[1], self.max_point[0], self.max_point[1]))
-                return
+            if line == '' or set_door:
+                print("Door Not detected!")
+                self.draw_boundingBox(video_path)
+                if min_point == [-1, -1] or max_point == [-1, -1]:
+                    print("Please set door bounding box!")
+                    return True
+                f.write('{},{},{},{}'.format(min_point[0], min_point[1], max_point[0], max_point[1]))
+                return True
             points = line.split(',')
-            self.min_point[0] = int(points[0])
-            self.min_point[1] = int(points[1])
-            self.max_point[0] = int(points[2])
-            self.max_point[1] = int(points[3])
+            min_point[0] = int(points[0])
+            min_point[1] = int(points[1])
+            max_point[0] = int(points[2])
+            max_point[1] = int(points[3])
+            return False
 
 
 
@@ -27,6 +32,7 @@ class Door:
         mouse_pressed = False
         rec_mode = "min"
         cap = cv2.VideoCapture(video_patb)
+        # cap.set(cv2.CAP_PROP_POS_FRAMES, 750)
         for _ in range(5):
             ret, frame = cap.read()
         if (frame is None):
@@ -34,38 +40,40 @@ class Door:
             return
         show_img = frame
         img = np.copy(show_img)
+
         def mouse_callback(event, _x, _y, flags, param):
+            global  min_point, max_point
             nonlocal show_img, mouse_pressed
             if event == cv2.EVENT_LBUTTONDOWN:
                 print("Mouse Press!")
                 if rec_mode is "min":
-                    self.min_point[0] = _x
-                    self.min_point[1] = _y
+                    min_point[0] = _x
+                    min_point[1] = _y
                 if rec_mode is "max":
-                    self.max_point[0] = _x
-                    self.max_point[1] = _y
+                    max_point[0] = _x
+                    max_point[1] = _y
                 mouse_pressed = True
                 show_img = np.copy(img)
-                if self.min_point[0] != -1:
-                    cv2.circle(show_img, (self.min_point[0], self.min_point[1]),
+                if min_point[0] != -1:
+                    cv2.circle(show_img, (min_point[0], min_point[1]),
                                   8, (255, 0, 0), -1)
-                if self.max_point[0] != -1:
-                    cv2.circle(show_img, (self.max_point[0], self.max_point[1]),
+                if max_point[0] != -1:
+                    cv2.circle(show_img, (max_point[0], max_point[1]),
                                8, (0, 0, 255), -1)
 
             elif event == cv2.EVENT_LBUTTONUP:
                 print("Mouse Down!")
                 mouse_pressed = False
-                if self.min_point[0] != -1 and self.max_point[0] != -1:
+                if min_point[0] != -1 and max_point[0] != -1:
                     cv2.putText(show_img, "Min",
-                                (self.min_point[0], self.min_point[1]),
+                                (min_point[0], min_point[1]),
                                 cv2.FONT_HERSHEY_SIMPLEX, 3, (255, 0, 0), 2, cv2.LINE_AA
                                 )
                     cv2.putText(show_img, "Max",
-                                (self.max_point[0], self.max_point[1]),
+                                (max_point[0], max_point[1]),
                                 cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 255), 2, cv2.LINE_AA
                                 )
-                    cv2.rectangle(show_img, (self.min_point[0], self.min_point[1]),(self.max_point[0], self.max_point[1])
+                    cv2.rectangle(show_img, (min_point[0], min_point[1]),(max_point[0], max_point[1])
                                   ,(0, 255, 0), 2)
 
         cv2.namedWindow('image')
