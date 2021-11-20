@@ -28,7 +28,6 @@ def str2bool(v):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--door', '-d', help='Setting new Door and Pillow', default=False, dest='door', type=str2bool)
-    parser.add_argument('--phone', '-p', help='Setting phone number', default=False, dest='phone', type=str2bool)
     parser.add_argument('--weight', '-w', help='Setting weight path', default="./best.hdf5", dest='weight_path')
     parser.add_argument('--video', '-v', help='Input video path', dest='video')
 
@@ -43,7 +42,7 @@ if __name__ == "__main__":
     door = Door()
     set_door = door.read_position_file(set_door, video_path)
 
-    if not set_door and not set_phone:
+    if not set_door:
         pose_model = Pose_Model(RESNET50_POOLING_AVERAGE, DENSE_LAYER_ACTIVATION,video_path, weight_path=weight_path)
         t1 = threading.Thread(target=pose_model.showProcess, args=())
         t1.daemon = True

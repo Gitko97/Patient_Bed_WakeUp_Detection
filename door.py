@@ -11,7 +11,7 @@ class Door:
     def read_position_file(self, set_door, video_path):
         global door_min_point, door_max_point, pillow_min_point, pillow_max_point
         points = []
-        with open("door_position.txt", "r+") as f:
+        with open("position.txt", "r+") as f:
             for _ in range(2):
                 line = f.readline()
                 if line == '' or set_door:
@@ -20,7 +20,7 @@ class Door:
                     if door_min_point[0] == -1 or door_max_point[0] == -1 or pillow_min_point[0] == -1 or pillow_max_point[0] == -1:
                         print("Please set door bounding box!")
                         return True
-                    with open("door_position.txt", "w") as writeFile:
+                    with open("position.txt", "w") as writeFile:
                         writeFile.write('{},{},{},{}\n'.format(door_min_point[0], door_min_point[1], door_max_point[0], door_max_point[1]))
                         writeFile.write('{},{},{},{}'.format(pillow_min_point[0], pillow_min_point[1], pillow_max_point[0], pillow_max_point[1]))
                     return True

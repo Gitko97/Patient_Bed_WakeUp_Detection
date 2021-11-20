@@ -1,11 +1,19 @@
+import threading
+
 import cv2
 import mediapipe as mp
 import numpy as np
+from beepy import beep
 from tensorflow.keras.applications import ResNet50
 from tensorflow.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense
 import gui
 import door
+import datetime
+from SMS import SMS
+
+
+
 
 class Pose_Model:
     def __init__(self, RESNET50_POOLING_AVERAGE, DENSE_LAYER_ACTIVATION, video_path, weight_path = '/Users/joonhyoungjeon/PycharmProjects/pose-estimation/best.hdf5'):
@@ -15,6 +23,13 @@ class Pose_Model:
         self.model.summary()
         self.model.load_weights(weight_path)
         self.video_path = video_path
+        self.thread_SMS = threading.Thread(target=self.make_noise, args=())
+        self.thread_SMS.daemon = True
+
+
+    def make_noise(self):
+        '''Make noise after finishing executing a code'''
+        beep(sound="ping")
 
     def detect_mp_pose(self, image, pose):
         new_image = image.copy()
@@ -75,7 +90,7 @@ class Pose_Model:
         disappear_frame = 0
         user_sleep = False
 
-        with mp_pose.Pose(min_detection_confidence=0.7, min_tracking_confidence=0.5) as pose:
+        with mp_pose.Pose(min_detection_confidence=0.8, min_tracking_confidence=0.5) as pose:
             while cap.isOpened():
                 if gui.stop:
                     continue
@@ -138,6 +153,7 @@ class Pose_Model:
                             if sitting_frame == 10:
                                 sitting_frame = 0
                                 user_sleep = False
+                                self.thread_SMS.start()
 
                         L_shoulder = (landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
                                       landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y)
@@ -149,9 +165,10 @@ class Pose_Model:
                 except Exception as e:
                     disappear_frame = disappear_frame + 1
                     if disappear_frame > 90 and previous_nose != 0:
-                        print("disappear")
                         if self.check_point_in_box(door.door_min_point, door.door_max_point, previous_nose):
-                            print("In Door")
+                            now = datetime.datetime.now()
+                            nowDatetime = now.strftime('%Y-%m-%d %H:%M:%S')
+                            SMS.sendMSG("\n현재 시각 : "+nowDatetime+"\n환자가 밖으로 나감")
                         previous_nose = 0
                     pass
                 gui.result_img = image
