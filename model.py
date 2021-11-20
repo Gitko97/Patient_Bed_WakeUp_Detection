@@ -25,14 +25,14 @@ class Pose_Model:
         landmarks = results.pose_landmarks.landmark
         return landmarks
 
-    def check_in_door(self, point):
-        door_min_x = door.min_point[0]
-        door_min_y = door.min_point[1]
-        door_max_x = door.max_point[0]
-        door_max_y = door.max_point[1]
+    def check_point_in_box(self,box_min_point, box_max_point, point):
+        min_x = box_min_point[0]
+        min_y = box_min_point[1]
+        max_x = box_max_point[0]
+        max_y = box_max_point[1]
 
-        if door_min_x < point[0] and point[0] < door_max_x:
-            if door_min_y < point[1] and point[1] < door_max_y:
+        if min_x < point[0] and point[0] < max_x:
+            if min_y < point[1] and point[1] < max_y:
                 return True
         return False
 
@@ -73,6 +73,8 @@ class Pose_Model:
         fps_discount = 0
         previous_nose = 0
         disappear_frame = 0
+        user_sleep = False
+
         with mp_pose.Pose(min_detection_confidence=0.7, min_tracking_confidence=0.5) as pose:
             while cap.isOpened():
                 if gui.stop:
@@ -82,7 +84,7 @@ class Pose_Model:
                 if frame is None:
                     break
 
-                if gui.user_sleep is True:
+                if user_sleep is True:
                     if fps_discount < 3:
                         fps_discount = fps_discount + 1
                         continue
@@ -90,19 +92,36 @@ class Pose_Model:
 
                 image = frame
                 try:
-                    cv2.rectangle(image, (door.min_point[0], door.min_point[1]),
-                                  (door.max_point[0], door.max_point[1])
+                    cv2.rectangle(image, (door.door_min_point[0], door.door_min_point[1]),
+                                  (door.door_max_point[0], door.door_max_point[1])
                                   , (0, 255, 0), 2)
+                    cv2.putText(image, "Door",
+                                (door.door_min_point[0], door.door_min_point[1]),
+                                cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 0, 0), 2, cv2.LINE_AA
+                                )
+
+                    cv2.rectangle(image, (door.pillow_min_point[0], door.pillow_min_point[1]),
+                                  (door.pillow_max_point[0], door.pillow_max_point[1])
+                                  , (0, 255, 0), 2)
+                    cv2.putText(image, "Pillow",
+                                (door.pillow_min_point[0], door.pillow_min_point[1]),
+                                cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 2, cv2.LINE_AA
+                                )
+
 
                     landmarks = self.detect_mp_pose(image, pose)
 
                     image_shape = np.flip(image.shape[:2])
                     nose = (landmarks[mp_pose.PoseLandmark.NOSE.value].x, landmarks[mp_pose.PoseLandmark.NOSE.value].y)
                     previous_nose = tuple(np.multiply(nose, image_shape).astype(int))
-
                     disappear_frame = 0
                     image = self.draw_keyPoints_by_landmarks(image,landmarks, mp_pose)
-                    if gui.user_sleep is True:
+
+                    if user_sleep is False:
+                        if self.check_point_in_box(door.pillow_min_point, door.pillow_max_point, previous_nose):
+                            user_sleep = True
+
+                    if user_sleep is True:
                         predict_image = np.zeros_like(image)
                         predict_image = self.draw_keyPoints_by_landmarks(predict_image,landmarks, mp_pose)
 
@@ -118,7 +137,7 @@ class Pose_Model:
                             predict = "Sitting"
                             if sitting_frame == 10:
                                 sitting_frame = 0
-                                gui.user_sleep = False
+                                user_sleep = False
 
                         L_shoulder = (landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
                                       landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y)
@@ -131,7 +150,7 @@ class Pose_Model:
                     disappear_frame = disappear_frame + 1
                     if disappear_frame > 90 and previous_nose != 0:
                         print("disappear")
-                        if self.check_in_door(previous_nose):
+                        if self.check_point_in_box(door.door_min_point, door.door_max_point, previous_nose):
                             print("In Door")
                         previous_nose = 0
                     pass

@@ -27,7 +27,7 @@ def str2bool(v):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--door', '-d', help='Setting new door', default=False, dest='door', type=str2bool)
+    parser.add_argument('--door', '-d', help='Setting new Door and Pillow', default=False, dest='door', type=str2bool)
     parser.add_argument('--phone', '-p', help='Setting phone number', default=False, dest='phone', type=str2bool)
     parser.add_argument('--weight', '-w', help='Setting weight path', default="./best.hdf5", dest='weight_path')
     parser.add_argument('--video', '-v', help='Input video path', dest='video')
@@ -37,6 +37,7 @@ if __name__ == "__main__":
     weight_path = parser.parse_args().weight_path
     video_path = parser.parse_args().video
 
+    # set_door = True
     video_path = './testVideo/test.mov' # debug path
 
     door = Door()

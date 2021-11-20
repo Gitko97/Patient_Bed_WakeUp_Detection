@@ -5,7 +5,6 @@ import cv2
 from PIL import ImageTk as Pil_imageTk
 result_img = 0
 stop = False
-user_sleep = False
 class App(threading.Thread):
     def __init__(self, window, window_title):
         threading.Thread.__init__(self)
@@ -27,15 +26,8 @@ class App(threading.Thread):
         self.canvas.pack()
         self.button1 = tkinter.Button(self.frame2, text="일시정지", overrelief='solid', height=15,command=self.stop,compound="c")
         self.button1.pack(expand=1)
-        self.button2 = tkinter.Button(self.frame2, text="환자 취침", overrelief='solid', height=15,command=self.change_sleep,compound="c", fg='green')
-        self.button2.pack(expand=1)
         self.update()
         self.window.mainloop()
-
-    def change_sleep(self):
-        global user_sleep
-        user_sleep = True
-        self.button2.configure(fg="red")
 
     def stop(self):
         global stop
@@ -49,8 +41,6 @@ class App(threading.Thread):
     def update(self):
         global result_img
         try:
-            if user_sleep is False:
-                self.button2.configure(fg="green")
             vid = cv2.cvtColor(result_img, cv2.COLOR_BGR2RGB)
             vid = cv2.resize(vid, (self.video_width, self.video_height))
             self.photo = Pil_imageTk.PhotoImage(image=PIL.Image.fromarray(vid))
