@@ -31,18 +31,17 @@ if __name__ == "__main__":
     parser.add_argument('--weight', '-w', help='Setting weight path', default="./best.hdf5", dest='weight_path')
     parser.add_argument('--video', '-v', help='Input video path', dest='video')
 
-    set_door = parser.parse_args().door
-    set_phone = parser.parse_args().phone
+    setting_box = parser.parse_args().door
     weight_path = parser.parse_args().weight_path
     video_path = parser.parse_args().video
 
-    # set_door = True
-    video_path = './testVideo/test.mov' # debug path
+    # setting_box = True
+    video_path = './testVideo/2.mov' # debug path
 
     door = Door()
-    set_door = door.read_position_file(set_door, video_path)
+    setting_box = door.read_position_file(setting_box, video_path)
 
-    if not set_door:
+    if not setting_box:
         pose_model = Pose_Model(RESNET50_POOLING_AVERAGE, DENSE_LAYER_ACTIVATION,video_path, weight_path=weight_path)
         t1 = threading.Thread(target=pose_model.showProcess, args=())
         t1.daemon = True

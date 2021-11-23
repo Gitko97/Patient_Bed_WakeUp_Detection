@@ -90,7 +90,7 @@ class Pose_Model:
         disappear_frame = 0
         user_sleep = False
 
-        with mp_pose.Pose(min_detection_confidence=0.8, min_tracking_confidence=0.5) as pose:
+        with mp_pose.Pose(min_detection_confidence=0.7, min_tracking_confidence=0.4) as pose:
             while cap.isOpened():
                 if gui.stop:
                     continue
@@ -100,30 +100,13 @@ class Pose_Model:
                     break
 
                 if user_sleep is True:
-                    if fps_discount < 3:
+                    if fps_discount < 2:
                         fps_discount = fps_discount + 1
                         continue
                     fps_discount = 0
 
                 image = frame
                 try:
-                    cv2.rectangle(image, (door.door_min_point[0], door.door_min_point[1]),
-                                  (door.door_max_point[0], door.door_max_point[1])
-                                  , (0, 255, 0), 2)
-                    cv2.putText(image, "Door",
-                                (door.door_min_point[0], door.door_min_point[1]),
-                                cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 0, 0), 2, cv2.LINE_AA
-                                )
-
-                    cv2.rectangle(image, (door.pillow_min_point[0], door.pillow_min_point[1]),
-                                  (door.pillow_max_point[0], door.pillow_max_point[1])
-                                  , (0, 255, 0), 2)
-                    cv2.putText(image, "Pillow",
-                                (door.pillow_min_point[0], door.pillow_min_point[1]),
-                                cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 2, cv2.LINE_AA
-                                )
-
-
                     landmarks = self.detect_mp_pose(image, pose)
 
                     image_shape = np.flip(image.shape[:2])
@@ -168,8 +151,26 @@ class Pose_Model:
                         if self.check_point_in_box(door.door_min_point, door.door_max_point, previous_nose):
                             now = datetime.datetime.now()
                             nowDatetime = now.strftime('%Y-%m-%d %H:%M:%S')
-                            SMS.sendMSG("\n현재 시각 : "+nowDatetime+"\n환자가 밖으로 나감")
+                            try:
+                                disappear_frame = 0
+                                SMS.sendMSG("\n현재 시각 : "+nowDatetime+"\n환자가 밖으로 나감")
+                            except Exception as e:
+                                print("SMS send Error!")
                         previous_nose = 0
                     pass
+                cv2.rectangle(image, (door.door_min_point[0], door.door_min_point[1]),
+                              (door.door_max_point[0], door.door_max_point[1])
+                              , (0, 255, 0), 2)
+                cv2.putText(image, "Door",
+                            (door.door_min_point[0], door.door_min_point[1]),
+                            cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 0, 0), 2, cv2.LINE_AA
+                            )
+                cv2.rectangle(image, (door.pillow_min_point[0], door.pillow_min_point[1]),
+                              (door.pillow_max_point[0], door.pillow_max_point[1])
+                              , (0, 255, 0), 2)
+                cv2.putText(image, "Pillow",
+                            (door.pillow_min_point[0], door.pillow_min_point[1]),
+                            cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 2, cv2.LINE_AA
+                            )
                 gui.result_img = image
         cap.release()
