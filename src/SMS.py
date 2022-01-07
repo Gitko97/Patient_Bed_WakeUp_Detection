@@ -5,10 +5,10 @@ from twilio.rest import Client
 
 
 class SMS:
-    account_sid = 'ACde5158a4a27e8b99d712c554172c9bd3'
-    auth_token = '819e3a1efcd4c79a6b90ecedfc35eed7'
+    account_sid = ''
+    auth_token = ''
     user_phoneNum = "+8201049998216"
-    twilio_phoneNum = "+18326376336"
+    twilio_phoneNum = ""
 
     @classmethod
     def sendMSG(cls, msg):
