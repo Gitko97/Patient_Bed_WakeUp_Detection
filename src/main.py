@@ -11,7 +11,6 @@ os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 RESNET50_POOLING_AVERAGE = 'avg'
 DENSE_LAYER_ACTIVATION = 'softmax'
-weight_path = './best.hdf5'
 
 result_img = 0
 def str2bool(v):
@@ -28,7 +27,7 @@ def str2bool(v):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--door', '-d', help='Setting new Door and Pillow', default=False, dest='door', type=str2bool)
-    parser.add_argument('--weight', '-w', help='Setting weight path', default="./best.hdf5", dest='weight_path')
+    parser.add_argument('--weight', '-w', help='Setting weight path', default="../model/best.hdf5", dest='weight_path')
     parser.add_argument('--video', '-v', help='Input video path', dest='video')
 
     setting_box = parser.parse_args().door

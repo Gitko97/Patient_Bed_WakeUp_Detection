@@ -16,7 +16,7 @@ from SMS import SMS
 
 
 class Pose_Model:
-    def __init__(self, RESNET50_POOLING_AVERAGE, DENSE_LAYER_ACTIVATION, video_path, weight_path = '/Users/joonhyoungjeon/PycharmProjects/pose-estimation/best.hdf5'):
+    def __init__(self, RESNET50_POOLING_AVERAGE, DENSE_LAYER_ACTIVATION, video_path, weight_path = '../model/best.hdf5'):
         self.model = Sequential()
         self.model.add(ResNet50(include_top=False, pooling=RESNET50_POOLING_AVERAGE, weights='imagenet'))
         self.model.add(Dense(2, activation=DENSE_LAYER_ACTIVATION))
