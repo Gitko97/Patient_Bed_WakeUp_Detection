@@ -35,9 +35,6 @@ if __name__ == "__main__":
     weight_path = parser.parse_args().weight_path
     video_path = parser.parse_args().video
 
-    # setting_box = True
-    video_path = './testVideo/2.mov' # debug path
-
     door = Door()
     setting_box = door.read_position_file(setting_box, video_path)
 

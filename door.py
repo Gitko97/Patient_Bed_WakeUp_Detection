@@ -51,7 +51,7 @@ class Door:
         current_drawMode = DRAW_MODE_LIST["Door"]
 
         cap = cv2.VideoCapture(video_patb)
-        # cap.set(cv2.CAP_PROP_POS_FRAMES, 750)
+        # cap.set(cv2.CAP_PROP_POS_FRAMES, 1200)
 
         for _ in range(5):
             ret, frame = cap.read()
@@ -115,12 +115,6 @@ class Door:
         cv2.setMouseCallback('image', mouse_callback)
         height, width, channel = show_img.shape
         while True:
-            cv2.putText(show_img, "Press 'A' to close", (0, height),
-                        cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 255), 2)
-            cv2.putText(show_img, "Current Mode : " + str(current_drawMode), (0, height-60),
-                        cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 255), 2)
-
-            cv2.imshow('image', show_img)
             k = cv2.waitKey(1)
 
             if k == ord('a') and not mouse_pressed:
@@ -137,5 +131,19 @@ class Door:
                     current_drawMode = DRAW_MODE_LIST["Pillow"]
                 else:
                     current_drawMode = DRAW_MODE_LIST["Door"]
+
+            cv2.putText(show_img, "Current : "+str(list(DRAW_MODE_LIST.keys())[current_drawMode]) +" / "+ str(list(REC_MODE_LIST.keys())[current_recMode]),
+                        (0, height - 210),
+                        cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 255), 2)
+            cv2.putText(show_img, "Press 'A' to close", (0, height- 140),
+                        cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 255), 2)
+            cv2.putText(show_img, "'S' to change Min/Max point",
+                        (0, height - 70),
+                        cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 255), 2)
+            cv2.putText(show_img, "'M' to change Mode",
+                        (0, height),
+                        cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 255), 2)
+
+            cv2.imshow('image', show_img)
 
         cv2.destroyAllWindows()

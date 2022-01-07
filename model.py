@@ -90,7 +90,7 @@ class Pose_Model:
         disappear_frame = 0
         user_sleep = False
 
-        with mp_pose.Pose(min_detection_confidence=0.7, min_tracking_confidence=0.4) as pose:
+        with mp_pose.Pose(min_detection_confidence=0.6, min_tracking_confidence=0.4) as pose:
             while cap.isOpened():
                 if gui.stop:
                     continue
