@@ -44,8 +44,6 @@
 * [Tensorflow](https://www.tensorflow.org/)
 * [Twilio](https://www.twilio.com/)
 
-<p align="right">(<a href="#top">back to top</a>)</p>
-
 
 
 <!-- GETTING STARTED -->
@@ -55,8 +53,12 @@
 
 * Twillo
   본 서비스의 무단외출의 SMS 서비스를 사용하기 위해서는 [Twilio](https://www.twilio.com/) 에서 가상의 번호를 발급받아야합니다.
-  ![product-screenshot]
-  위 그림과 같이 3개의 정보를 발급받아 사용할 실제 핸드폰 번호를 포함하여 `SMS.py` 의 4개의 property를 업데이트 해야합니다. (사용하지 않아도 무관합니다)
+![image](https://user-images.githubusercontent.com/41865809/148550294-e119e62c-4cc3-4d7c-abd8-6f6c101507b3.png)
+
+
+
+  위 그림과 같이 3개의 정보를 발급받아 사용할 실제 핸드폰 번호를 포함하여 `SMS.py` 의 4개의 property를 업데이트 해야합니다. (사용하지 않아도 무관합니다)</br>
+![image](https://user-images.githubusercontent.com/41865809/148550212-2bf21fd5-28d3-49fe-97cc-98c0935f8944.png)
 
 * Libraries
   테스트 환경은 Anaconda의 가상환경 위에서 진행되었습니다.
@@ -91,28 +93,29 @@ _Below is an example of how you can instruct your audience on installing and set
 4. 다음 script 실행을 통해 영상에 맞는 `position.txt` 설정이 필요합니다
    
    ```sh
-   python main.py --d true
+   python main.py --d true --v (video_path)
    ```
    
    
    `position.txt` 파일은 영상의 문 위치와 배게 위치를 저장하는 파일입니다. </br>
-   상단 스크립트 실행 후 마우스 클릭으로 하단 어시스트 문구를 따라 '문'과 '배게'의 바운딩 박스를 설정해 주세요.
+   상단 스크립트 실행 후 마우스 클릭으로 하단 어시스트 문구를 따라 '문'과 '배게'의 바운딩 박스를 설정해 주세요.</br>
+   ![image](https://user-images.githubusercontent.com/41865809/148550775-cbb7de80-b2b2-4207-8956-88024a5cb361.png)
+
+
     
     * 현재 `position.txt` 파일의 좌표는 `test_2.mov` 영상의 좌표값들 입니다.
 5. 프로그램을 실행해 주세요.
    
    ```sh
-   python main.py --v video_path
+   python main.py --v (video_path)
    ```
-   
-<p align="right">(<a href="#top">back to top</a>)</p>
+  
 
 <!-- LICENSE -->
 ## License
 
 Distributed under the *. See `LICENSE.txt` for more information.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
 
 
 
